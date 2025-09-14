@@ -1,168 +1,147 @@
-<!-- Ensure this site is served over HTTPS and has a proper Content-Security-Policy in production. -->
+<?php require_once __DIR__ . '/bootstrap.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="<?php echo isset($page_description) ? $page_description : 'Hexacore Industries - Industrial-grade fasteners for aerospace, marine, defense, and construction. Precision and speed you can rely on.'; ?>">
-  <meta property="og:title" content="<?php echo isset($page_title) ? $page_title : 'Hexacore Industries LLC'; ?>" />
-  <meta property="og:description" content="<?php echo isset($page_description) ? $page_description : 'Industrial-grade fasteners built for strength and stocked for speed.'; ?>" />
-  <meta property="og:image" content="logo.webp" />
-  <meta property="og:type" content="website" />
-  <meta name="robots" content="index, follow">
-  <title><?php echo isset($page_title) ? $page_title . ' | Hexacore Industries LLC' : 'Hexacore Industries LLC | Industrial Fasteners & Supplies'; ?></title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Primary Meta Tags -->
+  <title><?= isset($pageTitle) ? sanitize_output($pageTitle) . ' | ' : '' ?>Hexacore Industries | Industrial Fasteners & Supplies</title>
+  <meta name="title" content="Hexacore Industries | Industrial Fasteners & Supplies">
+  <meta name="description" content="<?= isset($pageDescription) ? sanitize_output($pageDescription) : 'Hexacore Industries - Industrial-grade fasteners for aerospace, marine, defense, and construction. Precision and speed you can rely on.' ?>">
+  <meta name="keywords" content="industrial fasteners, aerospace bolts, marine hardware, defense fasteners, construction supplies, stainless steel, titanium, precision engineering">
+  <meta name="author" content="Hexacore Industries LLC">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="<?= url($_SERVER['REQUEST_URI'] ?? '') ?>">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= url($_SERVER['REQUEST_URI'] ?? '') ?>">
+  <meta property="og:title" content="<?= isset($pageTitle) ? sanitize_output($pageTitle) . ' | ' : '' ?>Hexacore Industries">
+  <meta property="og:description" content="<?= isset($pageDescription) ? sanitize_output($pageDescription) : 'Industrial-grade fasteners built for strength and stocked for speed.' ?>">
+  <meta property="og:image" content="<?= url('logo.webp') ?>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Hexacore Industries">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="<?= url($_SERVER['REQUEST_URI'] ?? '') ?>">
+  <meta name="twitter:title" content="<?= isset($pageTitle) ? sanitize_output($pageTitle) . ' | ' : '' ?>Hexacore Industries">
+  <meta name="twitter:description" content="<?= isset($pageDescription) ? sanitize_output($pageDescription) : 'Industrial-grade fasteners built for strength and stocked for speed.' ?>">
+  <meta name="twitter:image" content="<?= url('logo.webp') ?>">
+
+  <!-- Favicon and App Icons -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Critical CSS and Assets -->
+  <?php if (config('app.env') === 'local'): ?>
+    <script type="module" src="http://localhost:5173/@vite/client"></script>
+    <script type="module" src="<?= vite_asset('resources/js/app.js') ?>"></script>
+    <link rel="stylesheet" href="<?= vite_asset('resources/css/app.css') ?>">
+  <?php else: ?>
+    <link rel="stylesheet" href="<?= asset('assets/app.css') ?>">
+    <script type="module" src="<?= asset('assets/app.js') ?>" defer></script>
+  <?php endif; ?>
+
+  <!-- Fallback Styles for Critical Path -->
   <style>
-ul.nav_1, ul.nav_2 {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 250ms ease, transform 250ms ease;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #1f2937;
-  color: #f9fafb;
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  width: max-content;
-  max-width: 22rem;
-  white-space: nowrap;
-  min-width: 10rem;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding: 0.75rem 0.5rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  z-index: 60;
-}
-
-ul.nav_1 li + li, ul.nav_2 li + li {
-  margin-top: 0.375rem;
-}
-
-ul.nav_1 li, ul.nav_2 li {
-  width: 100%;
-}
-ul.nav_1 li a, ul.nav_2 li a {
-  width: 100%;
-  display: block;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  transition: background-color 200ms ease;
-}
-ul.nav_1 li a:hover, ul.nav_2 li a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.show-submenu > ul.nav_1,
-.show-submenu > ul.nav_2 {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-  left: 0;
-}
-
-ul.nav_0 {
-  display: flex;
-  gap: 1.25rem;
-  list-style: none;
-  position: relative;
-  flex-wrap: wrap;
-  padding: 0.5rem 0;
-}
-
-ul.nav_0 > li {
-  position: relative;
-  transition: transform 200ms ease;
-}
-
-ul.nav_0 > li:hover {
-  transform: translateY(-2px);
-}
-
-ul.nav_0 a {
-  display: block;
-  padding: 0.75rem 1.25rem;
-  text-decoration: none;
-  color: #f3f4f6;
-  font-weight: 600;
-  border-radius: 0.375rem;
-  transition: background-color 200ms, color 200ms;
-}
-
-ul.nav_0 a:hover,
-ul.nav_0 a:focus {
-  background-color: #e7441c;
-  color: #ffffff;
-  outline: none;
-}
-
-@media (max-width: 767px) {
-  ul.nav_1,
-  ul.nav_2 {
-    position: static !important;
-    transform: none !important;
-    opacity: 1 !important;
-    display: block !important;
-    background-color: #1f2937;
-    box-shadow: none;
-    max-height: none;
-    overflow: visible;
-    padding: 0;
-    margin-top: 0.25rem;
-    border-radius: 0.375rem;
-  }
-
-  ul.nav_1 > li,
-  ul.nav_2 > li {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .show-submenu > ul.nav_1,
-  .show-submenu > ul.nav_2 {
-    transform: none !important;
-    left: 0 !important;
-  }
-}
+    /* Critical above-the-fold styles */
+    body { font-family: Inter, system-ui, sans-serif; margin: 0; background: #111827; color: #f9fafb; }
+    .hero-gradient { background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(0, 0, 0, 0.85) 100%); }
+    .btn-primary { background: #dc2626; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; }
+    .loading { opacity: 0.7; pointer-events: none; }
   </style>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Hexacore Industries LLC",
+    "url": "<?= config('app.url') ?>",
+    "logo": "<?= url('logo.webp') ?>",
+    "sameAs": [],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-863-670-8586",
+      "contactType": "Customer Service",
+      "availableLanguage": "English"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Industrial Blvd",
+      "addressLocality": "Tampa",
+      "addressRegion": "FL",
+      "addressCountry": "US"
+    }
+  }
+  </script>
+
+  <?php if (config('analytics.google_analytics_id')): ?>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<?= config('analytics.google_analytics_id') ?>"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('nav a[href="#"]').forEach(a => {
-        a.href = 'HexacoreIndustriesCatalog.pdf';
-        a.target = '_blank';
-      });
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<?= config('analytics.google_analytics_id') ?>', {
+      page_title: '<?= isset($pageTitle) ? sanitize_output($pageTitle) : 'Home' ?>',
+      custom_map: {'custom_parameter_1': 'industrial_fasteners'}
     });
   </script>
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      AOS.init({ once: true });
-    });
-  </script>
+  <?php endif; ?>
+
+  <?php if (config('analytics.google_tag_manager_id')): ?>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','<?= config('analytics.google_tag_manager_id') ?>');</script>
+  <?php endif; ?>
 </head>
 <body class="h-full bg-gray-900 text-gray-100 font-sans" x-data="{ showTerms: false }">
-  <noscript>Your browser does not support JavaScript. Please enable it to view this site.</noscript>
+  <noscript>
+    <p>Your browser does not support JavaScript. Please enable it to view this site.</p>
+    <?php if (config('analytics.google_tag_manager_id')): ?>
+    <!-- Google Tag Manager (noscript) -->
+    <iframe src="https://www.googletagmanager.com/ns.html?id=<?= config('analytics.google_tag_manager_id') ?>"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    <?php endif; ?>
+  </noscript>
+
   <header class="relative z-50 text-white bg-cover bg-center shadow-xl" style="background-image: url('background.webp');">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between py-4">
       <div class="flex items-center space-x-4">
-        <a href="index.php">
-          <img class="h-24" src="logo.webp" loading="lazy" alt="Hexacore Industries LLC Logo" />
-        </a>
+        <img class="h-24" src="logo.webp" loading="lazy" alt="Hexacore Industries Logo" width="96" height="96" />
       </div>
       <div class="flex items-center space-x-6">
         <div class="text-right">
           <p class="text-sm">Call us today</p>
-          <p class="text-lg font-semibold"><a href="tel:8636708586" class="hover:underline">863-670-8586</a></p>
+          <p class="text-lg font-semibold">
+            <a href="tel:8636708586" class="hover:underline" aria-label="Call Hexacore Industries at <?= format_phone('8636708586') ?>">
+              <?= format_phone('8636708586') ?>
+            </a>
+          </p>
         </div>
-        <a href="mailto:walter@hexacoreindustries.com" class="bg-white text-red-700 px-4 py-2 rounded font-semibold hover:bg-gray-200">Request Quote</a>
+        <a href="mailto:walter@hexacoreindustries.com"
+           class="btn-primary hover:bg-red-700 transition-colors duration-200"
+           aria-label="Request a quote from Hexacore Industries">
+          Request Quote
+        </a>
       </div>
     </div>
   </header>
